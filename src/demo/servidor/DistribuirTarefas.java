@@ -1,6 +1,8 @@
 package demo.servidor;
 
+import java.io.IOException;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class DistribuirTarefas implements Runnable {
     private Socket socket;
@@ -23,9 +25,12 @@ public class DistribuirTarefas implements Runnable {
     @Override
     public void run() {
         System.out.println("Distribuindo Tarefas para " + socket);
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+        try (Scanner sc = new Scanner(socket.getInputStream())) {
+            while (sc.hasNextLine()) {
+                String comando = sc.nextLine();
+                System.out.println(comando);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
