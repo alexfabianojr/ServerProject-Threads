@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class DistribuirTarefas implements Runnable {
     private Socket socket;
+    private BlockingQueue<String> filaComandos = new ArrayBlockingQueue<>(4);
 
     public DistribuirTarefas() {
+    }
+
+    public DistribuirTarefas(Socket socket, BlockingQueue<String> filaComandos) {
+        this.socket = socket;
+        this.filaComandos = filaComandos;
     }
 
     public DistribuirTarefas(Socket socket) {
@@ -29,13 +32,19 @@ public class DistribuirTarefas implements Runnable {
 
     @Override
     public void run() {
+
         System.out.println("Distribuindo Tarefas para " + socket);
+
         try (Scanner sc = new Scanner(socket.getInputStream());
              PrintStream saidaCliente = new PrintStream(socket.getOutputStream())) {
+
             ExecutorService threadPool = Executors.newCachedThreadPool();
+
             while (sc.hasNextLine()) {
+
                 String comando = sc.nextLine();
                 System.out.printf("Comando recebido %s", comando);
+
                 switch (comando) {
                     case "c1" -> {
                         ComandoC1 c1 = new ComandoC1(saidaCliente);
@@ -48,14 +57,16 @@ public class DistribuirTarefas implements Runnable {
                         Future<String> futureBanco = threadPool.submit(c2Banco);
                         threadPool.submit(new JuntaResultadosFutureWSFutureBanco(futureWS, futureBanco, saidaCliente));
                     }
+                    case "c3" -> {
+                        filaComandos.put(comando);
+                    }
                     case "fim" -> saidaCliente.println("Desligando o servidor");
                     default -> saidaCliente.println("Comando nao encontrado");
                 }
 
-
                 System.out.println(comando);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class ClienteTarefas {
+
     public static void main(String[] args) {
+
         try (Socket socket = new Socket("localhost", 12345);
-             PrintStream saida = new PrintStream(socket.getOutputStream());
-             Scanner sc = new Scanner(System.in);) {
+                PrintStream saida = new PrintStream(socket.getOutputStream());
+                Scanner sc = new Scanner(System.in);) {
 
             System.out.println("Conexao estabelecida");
 

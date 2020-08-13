@@ -13,6 +13,7 @@ public class ComandoC1 implements Runnable {
 
     @Override
     public void run() {
+
         try {
             saida.println("Confirmação comando c1");
             Thread.sleep(20000);
@@ -20,6 +21,7 @@ public class ComandoC1 implements Runnable {
             System.out.println(Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
+
         saida.println("Comando executado com sucesso");
     }
 }
