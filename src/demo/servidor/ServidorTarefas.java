@@ -11,7 +11,7 @@ public class ServidorTarefas {
     public static void main(String[] args) {
         System.out.println("----Iniciando o servidor----");
         try (ServerSocket servidor = new ServerSocket(12345)) {
-            ExecutorService threadPool = Executors.newCachedThreadPool();
+            ExecutorService threadPool = Executors.newFixedThreadPool(10, new FabricaDeThreads());
             while (true) {
                 Socket socketAccept = servidor.accept();
                 System.out.println("Aceitando o novo cliente " + socketAccept.getPort());
