@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DistribuirTarefas implements Runnable {
     private Socket socket;
@@ -40,8 +42,11 @@ public class DistribuirTarefas implements Runnable {
                         threadPool.execute(c1);
                     }
                     case "c2" -> {
-                        ComandoC2 c2 = new ComandoC2(saidaCliente);
-                        threadPool.execute(c2);
+                        ComandoC2ChamaWS c2WS = new ComandoC2ChamaWS(saidaCliente);
+                        ComandoC2AcessaBanco c2Banco = new ComandoC2AcessaBanco(saidaCliente);
+                        Future<String> futureWS = threadPool.submit(c2WS);
+                        Future<String> futureBanco = threadPool.submit(c2Banco);
+                        threadPool.submit(new JuntaResultadosFutureWSFutureBanco(futureWS, futureBanco, saidaCliente));
                     }
                     case "fim" -> saidaCliente.println("Desligando o servidor");
                     default -> saidaCliente.println("Comando nao encontrado");
