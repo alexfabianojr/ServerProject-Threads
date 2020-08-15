@@ -1,5 +1,9 @@
 package demo.servidor;
 
+import demo.comandos.ComandoC1;
+import demo.comandos.ComandoC2AcessaBanco;
+import demo.comandos.ComandoC2ChamaWS;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;

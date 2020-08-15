@@ -1,4 +1,4 @@
-package demo.servidor;
+package demo.comandos;
 
 import java.io.PrintStream;
 import java.util.Arrays;
